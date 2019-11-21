@@ -1,11 +1,43 @@
-import React, { Component } from 'react';
+import React, { Component } from "react";
+import { Link } from "react-router-dom";
+import axios from "axios";
 
 export default class ExercisesList extends Component {
-    render(){
-        return (
-            <div>
-                <p>You are on the Exercises List component!</p>
-            </div>
-        )
-    }
+  constructor(props) {
+    super(props);
+
+    this.deleteExercise = this.deleteExercise.bind(this);
+
+    this.state = { exercises: [] };
+  }
+
+  //   pulls exercises after mounting, component lifecycle
+  componentDidMount() {
+    axios
+      .get("http://localhost:5000/exercises/")
+      .then(response => {
+        this.setState({ exercises: response.data });
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
+  deleteExercise(id) {
+    axios
+      .delete("http://localhost:5000/exercises/" + id)
+      .then(res => console.log(res.data));
+    this.setState({
+        // only return the elements that do not have that id using filter method
+      exercises: this.state.exercises.filter(el => el._id !== id)
+    });
+  }
+
+  render() {
+    return (
+      <div>
+        <p>You are on the Exercises List component!</p>
+      </div>
+    );
+  }
 }
